@@ -1,6 +1,5 @@
-const insertBookForm = document.getElementById("bookForm");
-const searchBookForm = document.getElementById("searchBook");
 const RENDER_EVENT = "render-book";
+const SAVE_EDIT = "edit-book";
 const books = [];
 
 function isStorageAvailable() {
@@ -59,6 +58,31 @@ function completedBook(book) {
   book.isComplete = true;
   document.dispatchEvent(new Event(RENDER_EVENT));
   saveData();
+}
+
+function removeBook(bookObj) {
+  const bookIndex = books.findIndex((book) => book.id === bookObj.id);
+  books.splice(bookIndex, 1);
+  document.dispatchEvent(new Event(RENDER_EVENT));
+  saveData();
+}
+
+function editBook(bookObj) {
+  const saveBookBtn = document.getElementById("bookFormSubmit");
+  const saveEditBtn = document.getElementById("editFormSubmit");
+
+  saveBookBtn.hidden = true;
+  saveEditBtn.hidden = false;
+  
+  const insertBookForm = document.getElementById("bookForm");
+  insertBookForm.reset();
+  
+  const bookTitle = document.getElementById("bookFormTitle").value;
+  const bookAuthor = document.getElementById("bookFormAuthor").value;
+  const bookYear = document.getElementById("bookFormYear").value;
+  const bookCheckbox = document.getElementById("bookFormIsComplete");
+  const bookIsCompleted = (bookCheckbox) => bookCheckbox.checked;
+
 }
 
 function makeBook(book) {
@@ -129,8 +153,12 @@ function makeBook(book) {
 }
 
 window.addEventListener("DOMContentLoaded", () => {
+  const insertBookForm = document.getElementById("bookForm");
+  const searchBookForm = document.getElementById("searchBook");
+
   insertBookForm.addEventListener("submit", (e) => {
     addBook();
+    insertBookForm.reset();
     e.preventDefault();
   });
 

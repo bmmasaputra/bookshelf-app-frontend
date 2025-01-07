@@ -75,6 +75,12 @@ button span {
     color: black;
     font-size: 16px;
     font-weight: 500;
+    cursor: pointer;
+    transition: all .1s ease-out;
+}
+
+button:hover {
+    transform: translate(0px, -2px);
 }
 
 .rack-wrap {
@@ -103,6 +109,14 @@ button span {
 .book button {
     width: 30%;
     font-size: 14px;
+}
+
+.book button:first-child {
+    width: 40%;
+}
+
+.book button:nth-child(2) {
+    width: 20%;
 }
 
 #searchBook {
