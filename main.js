@@ -1,5 +1,6 @@
 const RENDER_EVENT = "render-book";
-const SAVE_EDIT = "edit-book";
+const SAVE_EVENT = "edit-book";
+const STORAGE_KEY = "BOOKSHELF_APPS";
 const books = [];
 
 function isStorageAvailable() {
@@ -67,47 +68,6 @@ function removeBook(bookObj) {
   saveData();
 }
 
-// function editBook(book) {
-//   const saveBookBtn = document.getElementById("bookFormSubmit");
-//   const saveEditBtn = document.getElementById("editFormSubmit");
-
-//   saveBookBtn.hidden = true;
-//   saveEditBtn.hidden = false;
-
-//   const insertBookForm = document.getElementById("bookForm");
-//   insertBookForm.reset();
-
-//   const bookTitle = document.getElementById("bookFormTitle");
-//   const bookAuthor = document.getElementById("bookFormAuthor");
-//   const bookYear = document.getElementById("bookFormYear");
-//   const bookCheckbox = document.getElementById("bookFormIsComplete");
-//   const isBookCompleted = (book) => book.isComplete;
-
-//   bookTitle.value = book.title;
-//   bookAuthor.value = book.author;
-//   bookYear.value = book.year;
-
-//   if (isBookCompleted(book)) {
-//     bookCheckbox.checked = true;
-//   } else {
-//     bookCheckbox.checked = false;
-//   }
-
-//   saveEditBtn.addEventListener("click", (e) => {
-//     const title = bookTitle.value;
-//     const author = bookAuthor.value;
-//     const year = bookYear.value;
-//     const isCheckboxChecked = (bookCheckbox) => bookCheckbox.checked;
-
-//     book.title = title;
-//     book.author = author;
-//     book.year = year;
-//     book.isComplete = isCheckboxChecked(bookCheckbox);
-
-//     insertBookForm.reset();
-//     dispatchEvent(new Event(SAVE_EDIT));
-//   });
-// }
 function toggleFormButtons(isEditMode) {
   const saveBookBtn = document.getElementById("bookFormSubmit");
   const saveEditBtn = document.getElementById("editFormSubmit");
@@ -146,7 +106,9 @@ function handleSaveEdit(book) {
     book.isComplete = bookCheckbox.checked;
 
     insertBookForm.reset();
-    dispatchEvent(new Event(SAVE_EDIT));
+
+    dispatchEvent(new Event(RENDER_EVENT));
+    dispatchEvent(new Event(SAVE_EVENT));
   };
 
   saveEditBtn.replaceWith(saveEditBtn.cloneNode(true));
@@ -162,6 +124,7 @@ function editBook(book) {
   populateFormWithBookData(book);
 
   handleSaveEdit(book);
+  saveData();
 }
 
 function makeBook(book) {
@@ -229,6 +192,27 @@ function makeBook(book) {
   buttonContainer.append(editBtn);
 
   return bookContainer;
+}
+
+function saveData() {
+  if (isStorageAvailable()) {
+    const parsed = JSON.stringify(books);
+    localStorage.setItem(STORAGE_KEY, parsed);
+    document.dispatchEvent(new Event(SAVE_EVENT));
+  }
+}
+
+function loadDataFromStorage() {
+  const serializedData = localStorage.getItem(STORAGE_KEY);
+  const data = JSON.parse(serializedData);
+
+  if (data !== null) {
+    data.forEach((book) => {
+      books.push(book);
+    });
+  }
+
+  document.dispatchEvent(new Event(RENDER_EVENT));
 }
 
 window.addEventListener("DOMContentLoaded", () => {
