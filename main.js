@@ -67,22 +67,101 @@ function removeBook(bookObj) {
   saveData();
 }
 
-function editBook(bookObj) {
+// function editBook(book) {
+//   const saveBookBtn = document.getElementById("bookFormSubmit");
+//   const saveEditBtn = document.getElementById("editFormSubmit");
+
+//   saveBookBtn.hidden = true;
+//   saveEditBtn.hidden = false;
+
+//   const insertBookForm = document.getElementById("bookForm");
+//   insertBookForm.reset();
+
+//   const bookTitle = document.getElementById("bookFormTitle");
+//   const bookAuthor = document.getElementById("bookFormAuthor");
+//   const bookYear = document.getElementById("bookFormYear");
+//   const bookCheckbox = document.getElementById("bookFormIsComplete");
+//   const isBookCompleted = (book) => book.isComplete;
+
+//   bookTitle.value = book.title;
+//   bookAuthor.value = book.author;
+//   bookYear.value = book.year;
+
+//   if (isBookCompleted(book)) {
+//     bookCheckbox.checked = true;
+//   } else {
+//     bookCheckbox.checked = false;
+//   }
+
+//   saveEditBtn.addEventListener("click", (e) => {
+//     const title = bookTitle.value;
+//     const author = bookAuthor.value;
+//     const year = bookYear.value;
+//     const isCheckboxChecked = (bookCheckbox) => bookCheckbox.checked;
+
+//     book.title = title;
+//     book.author = author;
+//     book.year = year;
+//     book.isComplete = isCheckboxChecked(bookCheckbox);
+
+//     insertBookForm.reset();
+//     dispatchEvent(new Event(SAVE_EDIT));
+//   });
+// }
+function toggleFormButtons(isEditMode) {
   const saveBookBtn = document.getElementById("bookFormSubmit");
   const saveEditBtn = document.getElementById("editFormSubmit");
 
-  saveBookBtn.hidden = true;
-  saveEditBtn.hidden = false;
-  
+  saveBookBtn.hidden = isEditMode;
+  saveEditBtn.hidden = !isEditMode;
+}
+
+function resetForm() {
   const insertBookForm = document.getElementById("bookForm");
   insertBookForm.reset();
-  
-  const bookTitle = document.getElementById("bookFormTitle").value;
-  const bookAuthor = document.getElementById("bookFormAuthor").value;
-  const bookYear = document.getElementById("bookFormYear").value;
-  const bookCheckbox = document.getElementById("bookFormIsComplete");
-  const bookIsCompleted = (bookCheckbox) => bookCheckbox.checked;
+}
 
+function populateFormWithBookData(book) {
+  document.getElementById("bookFormTitle").value = book.title;
+  document.getElementById("bookFormAuthor").value = book.author;
+  document.getElementById("bookFormYear").value = book.year;
+
+  const bookCheckbox = document.getElementById("bookFormIsComplete");
+  bookCheckbox.checked = book.isComplete;
+}
+
+function handleSaveEdit(book) {
+  const saveEditBtn = document.getElementById("editFormSubmit");
+  const insertBookForm = document.getElementById("bookForm");
+
+  const bookTitle = document.getElementById("bookFormTitle");
+  const bookAuthor = document.getElementById("bookFormAuthor");
+  const bookYear = document.getElementById("bookFormYear");
+  const bookCheckbox = document.getElementById("bookFormIsComplete");
+
+  const saveEditHandler = () => {
+    book.title = bookTitle.value;
+    book.author = bookAuthor.value;
+    book.year = bookYear.value;
+    book.isComplete = bookCheckbox.checked;
+
+    insertBookForm.reset();
+    dispatchEvent(new Event(SAVE_EDIT));
+  };
+
+  saveEditBtn.replaceWith(saveEditBtn.cloneNode(true));
+  document
+    .getElementById("editFormSubmit")
+    .addEventListener("click", saveEditHandler);
+}
+
+function editBook(book) {
+  toggleFormButtons(true);
+  resetForm();
+
+  populateFormWithBookData(book);
+
+  handleSaveEdit(book);
 }
 
 function makeBook(book) {
