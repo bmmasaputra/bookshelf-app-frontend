@@ -69,6 +69,7 @@ function removeBook(bookObj) {
 }
 
 function toggleFormButtons(isEditMode) {
+  console.log("toggle");
   const saveBookBtn = document.getElementById("bookFormSubmit");
   const saveEditBtn = document.getElementById("editFormSubmit");
 
@@ -107,8 +108,10 @@ function handleSaveEdit(book) {
 
     insertBookForm.reset();
 
-    dispatchEvent(new Event(RENDER_EVENT));
-    dispatchEvent(new Event(SAVE_EVENT));
+    document.dispatchEvent(new Event(RENDER_EVENT));
+
+    saveData();
+    toggleFormButtons(false);
   };
 
   saveEditBtn.replaceWith(saveEditBtn.cloneNode(true));
@@ -124,7 +127,6 @@ function editBook(book) {
   populateFormWithBookData(book);
 
   handleSaveEdit(book);
-  saveData();
 }
 
 function makeBook(book) {
@@ -144,7 +146,7 @@ function makeBook(book) {
   bookContainer.append(bookAuthor);
 
   const bookYear = document.createElement("p");
-  bookYear.setAttribute("bookItemYear");
+  bookYear.setAttribute("data-testid", "bookItemYear");
   bookYear.innerText = book.year;
   bookContainer.append(bookYear);
 
@@ -166,7 +168,7 @@ function makeBook(book) {
     const finishedButton = document.createElement("button");
     finishedButton.setAttribute("data-testid", "bookItemIsCompleteButton");
     finishedButton.id = "finishedBtn";
-    finishedButton.innerText = "Belum Selesai Dibaca";
+    finishedButton.innerText = "Selesai Dibaca";
 
     finishedButton.addEventListener("click", () => {
       completedBook(book);
@@ -175,7 +177,7 @@ function makeBook(book) {
     buttonContainer.append(finishedButton);
   }
 
-  const deleteBtn = createElement("button");
+  const deleteBtn = document.createElement("button");
   deleteBtn.setAttribute("data-testid", "bookItemDeleteButton");
   deleteBtn.innerText = "Hapus";
   deleteBtn.addEventListener("click", () => {
@@ -183,7 +185,7 @@ function makeBook(book) {
   });
   buttonContainer.append(deleteBtn);
 
-  const editBtn = createElement("button");
+  const editBtn = document.createElement("button");
   editBtn.setAttribute("data-testid", "bookItemEditButton");
   editBtn.innerText = "Edit Buku";
   editBtn.addEventListener("click", () => {
@@ -226,7 +228,7 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 
   searchBookForm.addEventListener("submit", (e) => {
-    searchBookForm();
+    // searchBookForm();
     e.preventDefault();
   });
 
@@ -238,7 +240,7 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 document.addEventListener(RENDER_EVENT, () => {
-  const finishedBookRack = document.getElementById("cempleteBookList");
+  const finishedBookRack = document.getElementById("completeBookList");
   const unfinishedBookRack = document.getElementById("incompleteBookList");
 
   finishedBookRack.innerHTML = "";
@@ -251,3 +253,7 @@ document.addEventListener(RENDER_EVENT, () => {
     else unfinishedBookRack.append(bookElement);
   });
 });
+
+// document.addEventListener(SAVE_EVENT, () => {
+//  alert("Buku Tersimpan");
+// })
