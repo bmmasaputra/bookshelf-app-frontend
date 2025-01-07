@@ -69,7 +69,6 @@ function removeBook(bookObj) {
 }
 
 function toggleFormButtons(isEditMode) {
-  console.log("toggle");
   const saveBookBtn = document.getElementById("bookFormSubmit");
   const saveEditBtn = document.getElementById("editFormSubmit");
 
@@ -217,9 +216,33 @@ function loadDataFromStorage() {
   document.dispatchEvent(new Event(RENDER_EVENT));
 }
 
+function searchBooks() {
+  const searchInput = document
+    .getElementById("searchBookTitle")
+    .value.toLowerCase();
+  const finishedBookRack = document.getElementById("completeBookList");
+  const unfinishedBookRack = document.getElementById("incompleteBookList");
+
+  finishedBookRack.innerHTML = "";
+  unfinishedBookRack.innerHTML = "";
+
+  books.forEach((book) => {
+    if (book.title.toLowerCase().includes(searchInput)) {
+      const bookElement = makeBook(book);
+      if (book.isComplete) {
+        finishedBookRack.append(bookElement);
+      } else {
+        unfinishedBookRack.append(bookElement);
+      }
+    }
+  });
+}
+
 window.addEventListener("DOMContentLoaded", () => {
   const insertBookForm = document.getElementById("bookForm");
   const searchBookForm = document.getElementById("searchBook");
+  const bookCompletionCheckbox = document.getElementById("bookFormIsComplete");
+  const submitBookButton = document.getElementById("bookFormSubmit");
 
   insertBookForm.addEventListener("submit", (e) => {
     addBook();
@@ -228,8 +251,18 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 
   searchBookForm.addEventListener("submit", (e) => {
-    // searchBookForm();
+    searchBooks();
     e.preventDefault();
+  });
+
+  bookCompletionCheckbox.addEventListener("change", () => {
+    const spanElement = submitBookButton.querySelector("span");
+
+    if (bookCompletionCheckbox.checked) {
+      spanElement.innerText = "'Selesai Dibaca'";
+    } else {
+      spanElement.innerText = "'Belum selesai dibaca'";
+    }
   });
 
   if (isStorageAvailable()) {
@@ -254,6 +287,7 @@ document.addEventListener(RENDER_EVENT, () => {
   });
 });
 
-// document.addEventListener(SAVE_EVENT, () => {
-//  alert("Buku Tersimpan");
-// })
+document.addEventListener(SAVE_EVENT, () => {
+  // For debugging
+  console.log(books);
+});
