@@ -30,7 +30,7 @@ function generateBookObj(
 function addBook() {
   const bookTitle = document.getElementById("bookFormTitle").value;
   const bookAuthor = document.getElementById("bookFormAuthor").value;
-  const bookYear = document.getElementById("bookFormYear").value;
+  const bookYear = Number(document.getElementById("bookFormYear").value);
   const bookCheckbox = document.getElementById("bookFormIsComplete");
   const bookIsCompleted = (bookCheckbox) => bookCheckbox.checked;
 
@@ -102,7 +102,7 @@ function handleSaveEdit(book) {
   const saveEditHandler = () => {
     book.title = bookTitle.value;
     book.author = bookAuthor.value;
-    book.year = bookYear.value;
+    book.year = Number(bookYear.value);
     book.isComplete = bookCheckbox.checked;
 
     insertBookForm.reset();
